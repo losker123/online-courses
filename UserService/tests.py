@@ -46,6 +46,7 @@ class UserServiceTestCase(unittest.TestCase):
         """Test the GET /users/<user_id> route."""
         # Mock a user
         mock_user = User(name="John Doe", email="john@example.com")
+        mock_user.id = 1  # Ensure the mock user has an ID
         self.mock_db_session.query.return_value.get.return_value = mock_user
 
         response = self.app.get(f'/users/{mock_user.id}')
@@ -69,8 +70,10 @@ class UserServiceTestCase(unittest.TestCase):
             "email": "alice@example.com"
         }
         mock_user = User(**new_user_data)
+        mock_user.id = 2  # Assign an ID to the mock user
         self.mock_db_session.add.return_value = None
         self.mock_db_session.commit.return_value = None
+        self.mock_db_session.refresh.return_value = None  # Simulate successful commit
 
         response = self.app.post('/users', json=new_user_data)
         self.assertEqual(response.status_code, 201)
@@ -88,6 +91,7 @@ class UserServiceTestCase(unittest.TestCase):
         """Test the PUT /users/<user_id> route."""
         # Mock a user
         mock_user = User(name="John Doe", email="john@example.com")
+        mock_user.id = 1  # Ensure the mock user has an ID
         self.mock_db_session.query.return_value.get.return_value = mock_user
 
         updated_data = {
@@ -113,8 +117,8 @@ class UserServiceTestCase(unittest.TestCase):
 
     def test_delete_user(self):
         """Test the DELETE /users/<user_id> route."""
-        # Mock a user
         mock_user = User(name="John Doe", email="john@example.com")
+        mock_user.id = 1  # Ensure the mock user has an ID
         self.mock_db_session.query.return_value.get.return_value = mock_user
         self.mock_db_session.delete.return_value = None
         self.mock_db_session.commit.return_value = None
@@ -130,7 +134,6 @@ class UserServiceTestCase(unittest.TestCase):
         response = self.app.delete('/users/999')
         self.assertEqual(response.status_code, 404)
         self.assertIn(b'User not found', response.data)
-
 
 if __name__ == '__main__':
     unittest.main()
