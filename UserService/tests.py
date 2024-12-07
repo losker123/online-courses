@@ -5,7 +5,7 @@ from app import app, db, User
 class UserServiceTestCase(unittest.TestCase):
     def setUp(self):
         """Set up test client and create a new database for each test."""
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user_user:user_pass@localhost/user_db_test'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.app = app.test_client()
         self.app.testing = True
