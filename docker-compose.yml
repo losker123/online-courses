@@ -1,0 +1,109 @@
+version: '3.9'
+
+services:
+  # Course Service
+  course-service:
+    build: ./CourseService
+    ports:
+      - "5001:5000"
+    environment:
+      - DATABASE_URL=postgresql://course_user:course_pass@course-db/course_db
+    depends_on:
+      - course-db
+
+  course-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: course_user
+      POSTGRES_PASSWORD: course_pass
+      POSTGRES_DB: course_db
+    ports:
+      - "5432:5432"
+
+  # User Service
+  user-service:
+    build: ./UserService
+    ports:
+      - "5002:5000"
+    environment:
+      - DATABASE_URL=postgresql://user_user:user_pass@user-db/user_db
+    depends_on:
+      - user-db
+
+  user-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user_user
+      POSTGRES_PASSWORD: user_pass
+      POSTGRES_DB: user_db
+    ports:
+      - "5433:5432"
+
+  # Enrollment Service
+  enrollment-service:
+    build: ./EnrollmentService
+    ports:
+      - "5003:5000"
+    environment:
+      - DATABASE_URL=postgresql://enroll_user:enroll_pass@enroll-db/enroll_db
+    depends_on:
+      - enroll-db
+
+  enroll-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: enroll_user
+      POSTGRES_PASSWORD: enroll_pass
+      POSTGRES_DB: enroll_db
+    ports:
+      - "5434:5432"
+
+  # Notification Service
+  notification-service:
+    build: ./NotificationService
+    ports:
+      - "5004:5000"
+    environment:
+      - DATABASE_URL=postgresql://notify_user:notify_pass@notification-db/notification_db
+    depends_on:
+      - notification-db
+
+  notification-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: notify_user
+      POSTGRES_PASSWORD: notify_pass
+      POSTGRES_DB: notification_db
+    ports:
+      - "5435:5432"
+
+  # Analytics Service
+  analytics-service:
+    build: ./AnalyticsService
+    ports:
+      - "5005:5000"
+    environment:
+      - DATABASE_URL=postgresql://analytics_user:analytics_pass@analytics-db/analytics_db
+    depends_on:
+      - analytics-db
+
+  analytics-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: analytics_user
+      POSTGRES_PASSWORD: analytics_pass
+      POSTGRES_DB: analytics_db
+    ports:
+      - "5436:5432"
+
+  # API Gateway (Optional, if needed)
+  gateway:
+    build: ./Gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - user-service
+      - course-service
+      - enrollment-service
+      - notification-service
+      - analytics-service
